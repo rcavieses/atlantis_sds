@@ -8,3 +8,10 @@ docs
 /*.Rcheck/
 vignettes/*.html
 vignettes/*.pdf
+
+# Data and output artifacts (rasters, model results, logs, exports)
+# Everything under data/ and outputs/ is a generated/downloaded artifact,
+# not source code. Scripts that produce them live in inst/scripts/.
+# (inst/extdata/ test fixtures are intentionally not covered by this.)
+/data/
+/outputs/
