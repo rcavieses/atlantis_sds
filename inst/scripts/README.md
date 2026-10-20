@@ -87,6 +87,9 @@ Rscript inst/scripts/build_bgm_depth.R        # requiere java y tools/bgmeriser.
    `java -jar tools/bgmeriser.jar -as "<proj>" goc_boxes_depth_laea.shp goc_boxes_depth.bgm`.
    Si BGMeriser deja vacío o fuera de la caja el `box#.inside`, se reemplaza por un punto
    dentro de la caja.
+6. BGMeriser escribe `box#.vertmix` y `box#.horizmix` como `NaN`; se reemplazan en todas las
+   cajas por los valores estándar `vertmix 1.0E-6` y `horizmix 1.0` (el script falla si queda
+   algún `NaN`).
 
 Salidas en `data/goc_polygons_depth_bgm/`: `goc_boxes_depth.shp` (WGS84, cajas limpias),
 `goc_boxes_depth_laea.shp` (metros), `goc_boxes_depth.bgm`, `goc_boxes_depth.gpkg` (capas
@@ -105,6 +108,7 @@ ogr2ogr -t_srs "$P" -dialect sqlite -sql "SELECT geometry, CAST(box_no AS intege
   FROM goc_polygons_bgm_depth_atlantis ORDER BY box_no" raw_laea.shp \
   data/goc_polygons_depth_atlantis_10172026/goc_polygons_bgm_depth_atlantis.shp
 java -jar tools/bgmeriser.jar -as "$P" raw_laea.shp raw.bgm
+# ojo: raw.bgm trae vertmix/horizmix = NaN; sustituir por 1.0E-6 y 1.0 (ver paso 6 de 3.2)
 ```
 
 ### 3.3 Proporciones por caja — `compute_box_proportions_depth.R`

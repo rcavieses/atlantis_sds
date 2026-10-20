@@ -174,9 +174,17 @@ for (i in empty) {
   b <- as.integer(sub("^box([0-9]+)\\..*", "\\1", bgm[i]))
   bgm[i] <- sprintf("box%d.inside\t%.3f %.3f", b, inside_pt[b + 1, 1], inside_pt[b + 1, 2])
 }
+
+# BGMeriser escribe box#.vertmix y box#.horizmix como NaN; Atlantis necesita valores
+# numericos. Se usan los estandar: vertmix 1.0E-6 y horizmix 1.0 para todas las cajas.
+VERTMIX <- "1.0E-6"
+HORIZMIX <- "1.0"
+bgm <- sub("^(box[0-9]+\\.vertmix)\\s+NaN\\s*$", paste0("\\1\t", VERTMIX), bgm)
+bgm <- sub("^(box[0-9]+\\.horizmix)\\s+NaN\\s*$", paste0("\\1\t", HORIZMIX), bgm)
+stopifnot(!any(grepl("NaN", bgm)))
 writeLines(bgm, bgm_file)
 message("BGM: ", bgm_file, " | ", grep("^nbox", bgm, value = TRUE), " | ", grep("^nface", bgm, value = TRUE),
-        " | inside corregidos: ", length(empty))
+        " | inside corregidos: ", length(empty), " | vertmix ", VERTMIX, ", horizmix ", HORIZMIX)
 
 # ---- GeoPackage para compartir ----
 gpkg <- file.path(out_dir, "goc_boxes_depth.gpkg")
