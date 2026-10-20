@@ -21,7 +21,6 @@ r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
 invisible(lapply(r_files, source))
 
 suppressMessages({
-  library(readxl)
   library(readr)
   library(dplyr)
   library(sf)
@@ -31,14 +30,12 @@ suppressMessages({
 set.seed(123)
 
 # 1. Build presence data for the functional group ----
-occ <- read_csv("data/occurrence_data_revised_taxonomy.csv", show_col_types = FALSE)
-tax <- read_excel("data/grupos_funcionales_Atlantis_GOC.xlsx", sheet = "taxonomy_master")
+occ <- read_csv("data/occurrence_data_final_taxonomy.csv", show_col_types = FALSE)
 
 target_years <- 2015:2025
 
 fg_occ <- occ %>%
-  left_join(tax %>% select(old_species, new_species, atlantis_fg), by = c("species" = "old_species")) %>%
-  filter(!is.na(new_species), new_species != "NA", atlantis_fg == sp_name,
+  filter(atlantis_fg == sp_name,
          year >= min(target_years), year <= max(target_years))
 
 message("Occurrence rows for ", sp_name, ": ", nrow(fg_occ))
